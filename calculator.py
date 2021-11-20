@@ -54,6 +54,20 @@ operators_dict = {
 }
 
 
+def my_replace(match):
+    match = match.group()
+    return str(" " + match + " ")
+
+
+# Fix the spaces on the expression
+def fix_expression(expression):
+    string_expression = re.sub(
+        r"[a-zA-Z]+|\)|\(|\*|\#", my_replace, expression)
+    element_list = list(string_expression.split(' '))
+    element_list = filter(lambda a: a != '', element_list)
+    return element_list
+
+
 def isNumber(n):
     try:
         float(n)
@@ -70,7 +84,7 @@ def error_expression(element):
 def infix_to_rpn(expression):
     expression_stack = Stack()
     operators_stack = Stack()
-    element_list = list(expression.split(' '))
+    element_list = fix_expression(expression)
     print('Infix expression: ' + ' '.join(element_list))
 
     for element in element_list:
@@ -134,18 +148,20 @@ def eval_by_postfix(expression):
 
 
 print('Expression 1:')
-print(eval_by_postfix(infix_to_rpn("1plus ( 3 into   4 ) # 3")))
+print(eval_by_postfix(infix_to_rpn("1plus(3*4)#3")))
 print('Expression 2:')
-print(eval_by_postfix(infix_to_rpn("1 plus (3 into 4 ) # 3")))
+print(eval_by_postfix(infix_to_rpn("1pls(3*4)#3")))
 print('Expression 3:')
-print(eval_by_postfix(infix_to_rpn("-1 plus ( 3 into 4 ) # 3")))
+print(eval_by_postfix(infix_to_rpn("1 plus (3 into 4 ) # 3")))
 print('Expression 4:')
-print(eval_by_postfix(infix_to_rpn("1 plus ( 3 into 4 ) # 3")))
+print(eval_by_postfix(infix_to_rpn("-1 plus ( 3 into 4) # 3")))
 print('Expression 5:')
-print(eval_by_postfix(infix_to_rpn(
-    "7 into 7 into 6 plus 7 plus 6 plus 8 over 2 into 1")))
+print(eval_by_postfix(infix_to_rpn("1plus ( 3 into 4 ) #3")))
 print('Expression 6:')
-print(eval_by_postfix(infix_to_rpn("( 48 plus 36.2 ) plus ( 8 over 4 ) * 2")))
+print(eval_by_postfix(infix_to_rpn(
+    "7 into 7 into6 plus 7 plus 6 plus 8 over 2 into 1")))
 print('Expression 7:')
+print(eval_by_postfix(infix_to_rpn("( 48 plus 36.2) plus( 8 over 4 ) * 2")))
+print('Expression 8:')
 print(eval_by_postfix(infix_to_rpn(
     "( ( 7 plus 4 ) minus 50 ) plus ( 3 into ( 5 minus 2 ) ) over 3")))
