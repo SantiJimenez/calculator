@@ -36,7 +36,7 @@ class Stack:
 
 
 # Custom operator '#'
-def plus_double_of(a, b):
+def plusDoubleOf(a, b):
     return a + (2 * b)
 
 
@@ -48,21 +48,21 @@ operators_dict = {
     'over': [operator.truediv, 2],
     'mod': [operator.mod, 2],
     'pow': [operator.pow, 3],
-    '#': [plus_double_of, 2],
+    '#': [plusDoubleOf, 2],
     '*': [operator.mul, 2],
     '(': [None, 0]
 }
 
 
-def my_replace(match):
+def myReplace(match):
     match = match.group()
     return str(" " + match + " ")
 
 
 # Fix the spaces on the expression
-def fix_expression(expression):
+def fixExpression(expression):
     string_expression = re.sub(
-        r"[a-zA-Z]+|\)|\(|\*|\#", my_replace, expression)
+        r"[a-zA-Z]+|\)|\(|\*|\#", myReplace, expression)
     element_list = list(string_expression.split(' '))
     element_list = filter(lambda a: a != '', element_list)
     return element_list
@@ -76,16 +76,16 @@ def isNumber(n):
         return False
 
 
-def error_expression(element):
-    return 'Error: %s is not an operator.' % (element)
+def errorExpression(element):
+    print('Error: %s is not an operator.' % (element))
 
 
 # Converts an input infix expression to an rpn expression
-def infix_to_rpn(expression):
+def infixToRpn(expression):
     expression_stack = Stack()
     operators_stack = Stack()
-    element_list = fix_expression(expression)
-    print('Infix expression: ' + ' '.join(element_list))
+    element_list = fixExpression(expression)
+    # print('Infix expression: ' + ' '.join(element_list))
 
     for element in element_list:
         # print('1. Element: ', element)
@@ -110,28 +110,27 @@ def infix_to_rpn(expression):
                     # print('num operators: ', operators_stack.len())
                     operators_stack.push(element)
             except:
-                print(error_expression(element))
-                expression_stack.empty()
-                expression_stack.push("error")
-                break
+                errorExpression(element)
+                # raise ValueError
+                return ValueError
         # print('2. Expression stack: ', expression_stack.items)
         # print('2. Operantions stack: ', operators_stack.items)
 
     while not operators_stack.isEmpty():
         expression_stack.push(operators_stack.pop())
 
-    print('RPN expression: ' + ' '.join(expression_stack.items))
+    # print('RPN expression: ' + ' '.join(expression_stack.items))
     return expression_stack
 
 
 # Evaluates the rpn expression and obtains the resulting value
-def eval_by_postfix(expression):
+def evalAsPostfix(expression):
     stack = Stack()
 
-    if 'error' in expression:
-        return "Fix the input string and try again"
-    else:
-        for element in expression:
+    expression_rpn = infixToRpn(expression)
+
+    try:
+        for element in expression_rpn:
             # print(element)
             if not isNumber(element) and operators_dict[element] is not None:
                 # print('operator:', element)
@@ -145,23 +144,24 @@ def eval_by_postfix(expression):
                 # print('number:', element)
                 stack.push(float(element))
         return stack.pop()
+    except:
+        return ValueError
 
 
-print('Expression 1:')
-print(eval_by_postfix(infix_to_rpn("1plus(3*4)#3")))
-print('Expression 2:')
-print(eval_by_postfix(infix_to_rpn("1pls(3*4)#3")))
-print('Expression 3:')
-print(eval_by_postfix(infix_to_rpn("1 plus (3 into 4 ) # 3")))
-print('Expression 4:')
-print(eval_by_postfix(infix_to_rpn("-1 plus ( 3 into 4) # 3")))
-print('Expression 5:')
-print(eval_by_postfix(infix_to_rpn("1plus ( 3 into 4 ) #3")))
-print('Expression 6:')
-print(eval_by_postfix(infix_to_rpn(
-    "7 into 7 into6 plus 7 plus 6 plus 8 over 2 into 1")))
-print('Expression 7:')
-print(eval_by_postfix(infix_to_rpn("( 48 plus 36.2) plus( 8 over 4 ) * 2")))
-print('Expression 8:')
-print(eval_by_postfix(infix_to_rpn(
-    "( ( 7 plus 4 ) minus 50 ) plus ( 3 into ( 5 minus 2 ) ) over 3")))
+# print('Expression 1:')
+# print(evalAsPostfix("1plus(3*4)#3"))
+# print('Expression 2:')
+# evalAsPostfix("1pls(3*4)#3")
+# print('Expression 3:')
+# print(evalAsPostfix("1 plus (3 into 4 ) # 3"))
+# print('Expression 4:')
+# print(evalAsPostfix("-1 plus ( 3 into 4) # 3"))
+# print('Expression 5:')
+# print(evalAsPostfix("1plus ( 3 into 4 ) #3"))
+# print('Expression 6:')
+# print(evalAsPostfix(
+#     "7 into 7 into6 plus 7 plus 6 plus 8 over 2 into 1"))
+# print('Expression 7:')
+# print(evalAsPostfix("( 48 plus 36.2) plus( 8 over 4 ) * 2"))
+# print('Expression 8:')
+# print(evalAsPostfix("( ( 7 plus 4 ) minus 50 ) plus ( 3 into ( 5 minus 2 ) ) over 3"))
